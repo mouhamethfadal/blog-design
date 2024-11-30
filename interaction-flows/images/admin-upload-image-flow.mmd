@@ -1,0 +1,26 @@
+sequenceDiagram
+    participant SW as Swagger UI
+    participant AA as Admin API
+    participant AS as Auth Service
+    participant IS as Image Service
+    participant IR as Image Repository
+    participant FS as File System
+    participant DB as MongoDB
+
+    SW->>AA: POST /api/v1/admin/images
+    Note right of SW: JWT in Authorization header
+    Note right of SW: MultipartFile in request body
+    AA->>AS: validateToken(JWT)
+    AS-->>AA: Token Valid
+    AA->>IS: uploadImage(MultipartFile)
+    IS->>IS: Generate unique filename
+    IS->>FS: Save file to disk
+    FS-->>IS: File saved successfully
+    IS->>IR: save(ImageData)
+    IR->>DB: insertOne(imageDocument)
+    Note right of IR: Store metadata and file path
+    DB-->>IR: Saved document
+    IR-->>IS: Saved ImageData
+    IS-->>AA: ImageDTO
+    Note right of AA: ImageDTO contains image URL
+    AA-->>SW: 201 Created with ImageDTO

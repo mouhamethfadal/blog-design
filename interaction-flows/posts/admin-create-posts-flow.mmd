@@ -1,0 +1,20 @@
+sequenceDiagram
+    participant SW as Swagger UI
+    participant AA as Admin API
+    participant AS as Auth Service
+    participant PS as Post Service
+    participant PR as Post Repository
+    participant DB as MongoDB
+
+    SW->>AA: POST /api/v1/admin/posts
+    Note right of SW: JWT in Authorization header
+    Note right of SW: PostDTO with Markdown in request body
+    AA->>AS: validateToken(JWT)
+    AS-->>AA: Token Valid
+    AA->>PS: createPost(PostDTO)
+    PS->>PR: save(Post)
+    PR->>DB: insertOne(document)
+    DB-->>PR: Inserted document
+    PR-->>PS: Saved Post
+    PS-->>AA: PostDTO
+    AA-->>SW: 201 Created with PostDTO

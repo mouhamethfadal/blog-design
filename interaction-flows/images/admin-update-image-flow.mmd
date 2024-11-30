@@ -1,0 +1,32 @@
+sequenceDiagram
+    participant SW as Swagger UI
+    participant AA as Admin API
+    participant AS as Auth Service
+    participant IS as Image Service
+    participant IR as Image Repository
+    participant DB as MongoDB
+    participant FS as File System
+
+    SW->>AA: PUT /api/v1/admin/images/{id}
+    Note right of SW: JWT in Authorization header
+    Note right of SW: New image file in request body
+    AA->>AS: validateToken(JWT)
+    AS-->>AA: Token Valid
+    AA->>IS: updateImage(id, MultipartFile)
+
+    IS->>IR: findById(id)
+    IR->>DB: findOne(id)
+    DB-->>IR: Image metadata
+
+    Note over IS: Generate new filename
+    IS->>FS: Delete old file
+    IS->>FS: Save new file
+    FS-->>IS: File saved successfully
+
+    IS->>IR: save(Updated ImageData)
+    IR->>DB: updateOne(id, imageDocument)
+    DB-->>IR: Updated document
+    IR-->>IS: Updated ImageData
+    IS-->>AA: ImageDTO
+    Note right of AA: ImageDTO contains new image URL
+    AA-->>SW: 200 OK with ImageDTO

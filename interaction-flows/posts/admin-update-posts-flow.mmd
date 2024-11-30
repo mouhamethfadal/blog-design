@@ -1,0 +1,23 @@
+sequenceDiagram
+    participant SW as Swagger UI
+    participant AA as Admin API
+    participant AS as Auth Service
+    participant PS as Post Service
+    participant PR as Post Repository
+    participant DB as MongoDB
+
+    SW->>AA: PUT /api/v1/admin/posts/{id}
+    Note right of SW: JWT in Authorization header
+    Note right of SW: Updated PostDTO in body
+    AA->>AS: validateToken(JWT)
+    AS-->>AA: Token Valid
+    AA->>PS: updatePost(id, PostDTO)
+    PS->>PR: findById(id)
+    PR->>DB: findOne(id)
+    DB-->>PR: Post document
+    PS->>PR: save(Updated Post)
+    PR->>DB: updateOne(id, document)
+    DB-->>PR: Updated document
+    PR-->>PS: Updated Post
+    PS-->>AA: PostDTO
+    AA-->>SW: 200 OK with updated PostDTO

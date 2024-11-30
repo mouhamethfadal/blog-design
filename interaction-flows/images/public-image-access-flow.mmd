@@ -1,0 +1,18 @@
+sequenceDiagram
+    participant RC as React Client
+    participant PA as Public API
+    participant IS as Image Service
+    participant IR as Image Repository
+    participant DB as MongoDB
+    participant FS as File System
+
+    RC->>PA: GET /api/v1/images/{id}
+    PA->>IS: getImage(id)
+    IS->>IR: findById(id)
+    IR->>DB: findOne(id)
+    DB-->>IR: Image metadata
+    IR->>FS: Read file using path
+    FS-->>IR: Image file
+    IR-->>IS: Image Resource
+    IS-->>PA: Image Response
+    PA-->>RC: Image File

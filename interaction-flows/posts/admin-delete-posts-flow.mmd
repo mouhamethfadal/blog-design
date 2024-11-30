@@ -1,0 +1,22 @@
+sequenceDiagram
+    participant SW as Swagger UI
+    participant AA as Admin API
+    participant AS as Auth Service
+    participant PS as Post Service
+    participant PR as Post Repository
+    participant DB as MongoDB
+
+    SW->>AA: DELETE /api/v1/admin/posts/{id}
+    Note right of SW: JWT in Authorization header
+    AA->>AS: validateToken(JWT)
+    AS-->>AA: Token Valid
+    AA->>PS: deletePost(id)
+    PS->>PR: findById(id)
+    PR->>DB: findOne(id)
+    DB-->>PR: Post document
+    PS->>PR: delete(Post)
+    PR->>DB: deleteOne(id)
+    DB-->>PR: Delete confirmation
+    PR-->>PS: Success
+    PS-->>AA: Success
+    AA-->>SW: 204 No Content

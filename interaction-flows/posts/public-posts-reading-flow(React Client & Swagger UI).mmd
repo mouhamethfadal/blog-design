@@ -1,0 +1,16 @@
+sequenceDiagram
+    participant Client as React Client/Swagger UI
+    participant PA as Public API
+    participant PS as Post Service
+    participant PR as Post Repository
+    participant DB as MongoDB
+
+    Client->>PA: GET /api/v1/posts?page=0&size=10
+    Note over Client,PA: No authentication needed
+    PA->>PS: getPosts(pageable)
+    PS->>PR: findAll(pageable)
+    PR->>DB: find().sort().limit().skip()
+    DB-->>PR: Posts documents
+    PR-->>PS: List<Post>
+    PS-->>PA: List<PostDTO>
+    PA-->>Client: JSON Response with posts

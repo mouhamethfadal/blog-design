@@ -1,0 +1,26 @@
+sequenceDiagram
+    participant SW as Swagger UI
+    participant AA as Admin API
+    participant AS as Auth Service
+    participant IS as Image Service
+    participant IR as Image Repository
+    participant FS as File System
+    participant PG as PostgreSQL
+
+    SW->>AA: DELETE /api/v1/admin/images/{id}
+    Note right of SW: JWT in Authorization header
+    AA->>AS: validateToken(JWT)
+    AS-->>AA: Token Valid
+    AA->>IS: deleteImage(id)
+    IS->>IR: findById(id)
+    IR->>PG: SELECT query
+    PG-->>IR: Image metadata
+    IR-->>IS: ImageData
+    IS->>FS: Delete file from disk
+    FS-->>IS: File deleted
+    IS->>IR: delete(id)
+    IR->>PG: DELETE query
+    PG-->>IR: Confirmation
+    IR-->>IS: Success
+    IS-->>AA: Success
+    AA-->>SW: 204 No Content

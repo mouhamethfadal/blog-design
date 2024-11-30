@@ -1,0 +1,25 @@
+sequenceDiagram
+    participant SW as Swagger UI
+    participant AA as Admin API
+    participant AS as Auth Service
+    participant DB as MongoDB
+
+    Note over SW,DB: Login for Admin Access
+    SW->>AA: POST /api/v1/auth/login
+    Note right of SW: {username, password}
+    AA->>AS: authenticate(credentials)
+    AS->>DB: findOne(username)
+    DB-->>AS: admin document
+    AS->>AS: verify password
+    AS->>AS: generate JWT
+    AS-->>AA: JWT token
+    AA-->>SW: JWT Response
+    Note right of SW: Store JWT for admin operations
+
+    Note over SW,DB: Using JWT for Admin APIs
+    SW->>AA: Any Admin API Request
+    Note right of SW: Bearer {JWT} in Authorization header
+    AA->>AS: validateToken(JWT)
+    AS-->>AA: Token Valid/Invalid
+    Note right of AA: If valid, proceed with operation
+    Note right of AA: If invalid, return 401 Unauthorized

@@ -1,0 +1,22 @@
+sequenceDiagram
+    participant SW as Swagger UI
+    participant AA as Admin API
+    participant AS as Auth Service
+    participant IS as Image Service
+    participant IR as Image Repository
+    participant DB as MongoDB
+
+    SW->>AA: GET /api/v1/admin/images?page=0&size=10
+    Note right of SW: JWT in Authorization header
+    AA->>AS: validateToken(JWT)
+    AS-->>AA: Token Valid
+
+    AA->>IS: getAllImages(pageable)
+    IS->>IR: findAll(pageable)
+    IR->>DB: find().sort().limit().skip()
+    Note right of DB: Returns collection of image documents
+    DB-->>IR: Image documents
+    IR-->>IS: List<ImageData>
+    IS-->>AA: List<ImageDTO>
+    Note right of AA: Each ImageDTO contains:<br/>- id<br/>- filename<br/>- url<br/>- createdAt
+    AA-->>SW: 200 OK with List<ImageDTO>

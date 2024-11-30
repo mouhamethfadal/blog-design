@@ -1,0 +1,76 @@
+graph LR
+    subgraph "Frontend Layer"
+        RC[React Client]
+        subgraph "React Components"
+            HP[Homepage]
+            PV[Post View]
+            PAG[Pagination]
+            MD[Markdown Renderer]
+        end
+    end
+
+    subgraph "Admin Interface"
+        SW[Swagger UI]
+    end
+
+    subgraph "Backend Layer"
+        subgraph "Spring Boot Application"
+            direction TB
+            subgraph "API Layer"
+                PA[Public APIs]
+                AA[Admin APIs]
+            end
+
+            subgraph "Security Layer"
+                AS[Auth Service]
+
+            end
+
+            subgraph "Service Layer"
+                PS[Post Service]
+                IS[Image Service]
+
+            end
+
+            subgraph "Repository Layer"
+                PR[Post Repository]
+                IR[Image Repository]
+            end
+        end
+        subgraph "Storage Layer"
+            MD_DB[(MongoDB)]
+            FS[fa:fa-folder-open File System]
+        end
+    end
+
+SecurityNote[["API Security Enhancements:<br/>• Add Rate Limiting<br/>with bucket4j<br/>• Setup Redis Caching Layer<br/>• Configure CDN (Cloudflare)<br/>• Add API Gateway Layer<br/>• Monitor Traffic Patterns"]]
+
+%% Frontend interactions
+RC --> |HTTP GET| PA
+PA --> |JSON/Markdown| RC
+
+%% Admin interactions
+SW --> |HTTP POST/UPDATE/DELETE with JWT Auth| AA
+AA --> |JSON/Markdown/Image link| SW
+SW --> |HTTP GET| PA
+PA --> |JSON/Markdown| SW
+AA --> |JWT Validation Request| AS
+AS --> |JWT Validation Response| AA
+
+%% Internal backend flows
+PA --> PS
+AA --> PS
+AA --> IS
+AA --> IS
+PS --> PR
+PR --> MD_DB
+IS --> IR
+IR --> FS
+
+classDef note fill:#ffe6e6,stroke:#ff0000,stroke-width:2px,width:1000px
+class SecurityNote note
+
+style RC fill:#f9f,stroke:#333,stroke-width:2px
+style SW fill:#bbf,stroke:#333,stroke-width:2px
+style MD_DB fill:#dfd,stroke:#333,stroke-width:2px
+style FS fill:#99eefb,stroke:#333,stroke-width:2px

@@ -1,0 +1,28 @@
+sequenceDiagram
+    participant SW as Swagger UI
+    participant AA as Admin API
+    participant AS as Auth Service
+    participant IS as Image Service
+    participant IR as Image Repository
+    participant DB as MongoDB
+    participant FS as File System
+
+    SW->>AA: GET /api/v1/admin/images/{id}
+    Note right of SW: JWT in Authorization header
+    AA->>AS: validateToken(JWT)
+    AS-->>AA: Token Valid
+
+    AA->>IS: getImageWithData(id)
+    IS->>IR: findById(id)
+    IR->>DB: findOne(id)
+    Note right of DB: Get image metadata
+    DB-->>IR: Image document
+
+    IR->>FS: Read file using path
+    FS-->>IR: Raw image data
+    IR-->>IS: ImageData with file content
+
+    IS-->>AA: ImageResponseDTO
+    Note right of AA: Response contains:<br/>1. Metadata:<br/>- id<br/>- filename<br/>- url<br/>- createdAt<br/>2. Image Data:<br/>- base64 encoded image<br/>- content type
+    AA-->>SW: 200 OK with ImageResponseDTO
+    Note right of SW: Swagger UI displays:<br/>1. Image metadata<br/>2. Preview of the image
