@@ -4,10 +4,9 @@ This repository contains the architectural design and interaction flows for my p
 
 ## Contents
 
-- System Architecture Diagram
-- Component Interactions
-- Sequence Diagrams for Key Flows
-- Security Considerations
+- [System Architecture Diagram](./blog-architecture/blog-architecture-design.mmd)
+- [Sequence Diagrams for Key Flows](./interaction-flows)
+- [Project Structure](./project-structure/project-structure.md)
 
 ## Design Overview
 
@@ -22,6 +21,7 @@ The architecture is designed with:
 Each diagram is stored in individual files:
 - Architecture diagrams (`.mmd`)
 - Interaction flows (`.mmd`)
+- Project structure (`.md`)
 
 ## Tools Used
 

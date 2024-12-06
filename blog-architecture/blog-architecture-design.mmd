@@ -1,4 +1,10 @@
 graph LR
+    subgraph "Configuration Management"
+        GR[(Git Repository)]
+        CS[Config Server]
+        GR --> CS
+    end
+
     subgraph "Frontend Layer"
         RC[React Client]
         subgraph "React Components"
@@ -16,6 +22,7 @@ graph LR
     subgraph "Backend Layer"
         subgraph "Spring Boot Application"
             direction TB
+            CC[Config Client]
             subgraph "API Layer"
                 PA[Public APIs]
                 AA[Admin APIs]
@@ -23,13 +30,11 @@ graph LR
 
             subgraph "Security Layer"
                 AS[Auth Service]
-
             end
 
             subgraph "Service Layer"
                 PS[Post Service]
                 IS[Image Service]
-
             end
 
             subgraph "Repository Layer"
@@ -43,34 +48,39 @@ graph LR
         end
     end
 
-SecurityNote[["API Security Enhancements:<br/>• Add Rate Limiting<br/>with bucket4j<br/>• Setup Redis Caching Layer<br/>• Configure CDN (Cloudflare)<br/>• Add API Gateway Layer<br/>• Monitor Traffic Patterns"]]
+    SecurityNote[["API Security Enhancements:<br/>• Add Rate Limiting with bucket4j<br/>• Setup Redis Caching Layer<br/>• Configure CDN (Cloudflare)<br/>• Add API Gateway Layer<br/>• Monitor Traffic Patterns"]]
+
+%% Config interactions
+    CS --> |Configuration properties| CC
+    CC --> |Fetch configuration| CS
 
 %% Frontend interactions
-RC --> |HTTP GET| PA
-PA --> |JSON/Markdown| RC
+    RC --> |HTTP GET| PA
+    PA --> |JSON/Markdown| RC
 
 %% Admin interactions
-SW --> |HTTP POST/UPDATE/DELETE with JWT Auth| AA
-AA --> |JSON/Markdown/Image link| SW
-SW --> |HTTP GET| PA
-PA --> |JSON/Markdown| SW
-AA --> |JWT Validation Request| AS
-AS --> |JWT Validation Response| AA
+    SW --> |HTTP POST/UPDATE/DELETE with JWT Auth| AA
+    AA --> |JSON/Markdown/Image link| SW
+    SW --> |HTTP GET| PA
+    PA --> |JSON/Markdown| SW
+    AA --> |JWT Validation Request| AS
+    AS --> |JWT Validation Response| AA
 
 %% Internal backend flows
-PA --> PS
-AA --> PS
-AA --> IS
-AA --> IS
-PS --> PR
-PR --> MD_DB
-IS --> IR
-IR --> FS
+    PA --> PS
+    AA --> PS
+    AA --> IS
+    PS --> PR
+    PR --> MD_DB
+    IS --> IR
+    IR --> FS
 
-classDef note fill:#ffe6e6,stroke:#ff0000,stroke-width:2px,width:1000px
-class SecurityNote note
+    classDef note fill:#ffe6e6,stroke:#ff0000,stroke-width:2px,width:1000px
+    class SecurityNote note
 
-style RC fill:#f9f,stroke:#333,stroke-width:2px
-style SW fill:#bbf,stroke:#333,stroke-width:2px
-style MD_DB fill:#dfd,stroke:#333,stroke-width:2px
-style FS fill:#99eefb,stroke:#333,stroke-width:2px
+    style RC fill:#f9f,stroke:#333,stroke-width:2px
+    style SW fill:#bbf,stroke:#333,stroke-width:2px
+    style MD_DB fill:#dfd,stroke:#333,stroke-width:2px
+    style FS fill:#99eefb,stroke:#333,stroke-width:2px
+    style CS fill:#85C1E9,stroke:#333,stroke-width:2px
+    style GR fill:#82E0AA,stroke:#333,stroke-width:2px
