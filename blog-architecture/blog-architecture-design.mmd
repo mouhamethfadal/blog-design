@@ -2,7 +2,7 @@ graph LR
     subgraph "Configuration Management"
         GR[(Git Repository)]
         CS[Config Server]
-        GR --> CS
+        CS -->|Retrieves configuration| GR
     end
 
     subgraph "Frontend Layer"
@@ -40,6 +40,7 @@ graph LR
             subgraph "Repository Layer"
                 PR[Post Repository]
                 IR[Image Repository]
+                UR[User Repository]
             end
         end
         subgraph "Storage Layer"
@@ -51,7 +52,7 @@ graph LR
     SecurityNote[["API Security Enhancements:<br/>• Add Rate Limiting with bucket4j<br/>• Setup Redis Caching Layer<br/>• Configure CDN (Cloudflare)<br/>• Add API Gateway Layer<br/>• Monitor Traffic Patterns"]]
 
 %% Config interactions
-    CS --> |Configuration properties| CC
+    CS --> |Returns configuration| CC
     CC --> |Fetch configuration| CS
 
 %% Frontend interactions
@@ -74,6 +75,7 @@ graph LR
     PR --> MD_DB
     IS --> IR
     IR --> FS
+    AS --> UR
 
     classDef note fill:#ffe6e6,stroke:#ff0000,stroke-width:2px,width:1000px
     class SecurityNote note
